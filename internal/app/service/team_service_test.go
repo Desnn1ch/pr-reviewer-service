@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/app"
 	"testing"
 
 	"github.com/google/uuid"
