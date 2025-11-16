@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	ID       uuid.UUID
-	TeamID   uuid.UUID
+	TeamName string
 	Name     string
 	IsActive bool
 }

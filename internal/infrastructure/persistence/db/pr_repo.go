@@ -124,8 +124,7 @@ func (r *PRRepo) Update(ctx context.Context, pr entity.PR) error {
 		SET title = $2,
 			author_id = $3,
 			status = $4,
-			created_at = $5,
-			merged_at = $6
+			merged_at = $5
 		WHERE id = $1
 	`
 
@@ -134,7 +133,6 @@ func (r *PRRepo) Update(ctx context.Context, pr entity.PR) error {
 		pr.Title,
 		pr.AuthorID,
 		string(pr.Status),
-		pr.CreatedAt,
 		pr.MergedAt,
 	)
 	if err != nil {

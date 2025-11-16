@@ -32,7 +32,7 @@ func (s *PRService) Create(ctx context.Context, id uuid.UUID, title string, auth
 		return entity.PR{}, err
 	}
 
-	activeUsers, err := s.users.ListActiveByTeamID(ctx, author.TeamID)
+	activeUsers, err := s.users.ListActiveByTeamName(ctx, author.TeamName)
 	if err != nil {
 		return entity.PR{}, err
 	}
@@ -94,6 +94,7 @@ func (s *PRService) Merge(ctx context.Context, id uuid.UUID) (entity.PR, error) 
 		result = pr
 		return nil
 	})
+
 	if err != nil {
 		return entity.PR{}, err
 	}
@@ -130,19 +131,17 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 			return err
 		}
 
-		activeUsers, err := s.users.ListActiveByTeamID(txCtx, oldReviewer.TeamID)
+		activeUsers, err := s.users.ListActiveByTeamName(ctx, oldReviewer.TeamName)
 		if err != nil {
 			return err
 		}
 
 		candidates := make([]uuid.UUID, 0, len(activeUsers))
 		for _, u := range activeUsers {
-			if u.ID == oldReviewer.ID {
+			if u.ID == oldReviewer.ID || u.ID == pr.AuthorID {
 				continue
 			}
-			if u.ID == pr.AuthorID {
-				continue
-			}
+
 			isAlreadyReviewer := false
 			for _, r := range pr.Reviewers {
 				if r == u.ID {
@@ -153,6 +152,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 			if isAlreadyReviewer {
 				continue
 			}
+
 			candidates = append(candidates, u.ID)
 		}
 
@@ -170,6 +170,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 		result = pr
 		return nil
 	})
+
 	if err != nil {
 		return entity.PR{}, err
 	}

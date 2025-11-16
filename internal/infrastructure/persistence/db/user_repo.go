@@ -26,18 +26,18 @@ func (r *UserRepo) UpsertMany(ctx context.Context, users []entity.User) error {
 	e := r.db.getExec(ctx)
 
 	const q = `
-	INSERT INTO users (id, team_id, name, is_active)
-	VALUES ($1, $2, $3, $4)
-	ON CONFLICT (id) DO UPDATE
-	SET team_id = EXCLUDED.team_id,
-	    name = EXCLUDED.name,
-	    is_active = EXCLUDED.is_active;
+		INSERT INTO users (id, team_name, name, is_active)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (id) DO UPDATE
+		SET team_name = EXCLUDED.team_name,
+			name = EXCLUDED.name,
+			is_active = EXCLUDED.is_active;
 	`
 
 	for _, u := range users {
 		_, err := e.ExecContext(ctx, q,
 			u.ID,
-			u.TeamID,
+			u.TeamName,
 			u.Name,
 			u.IsActive,
 		)
@@ -53,15 +53,15 @@ func (r *UserRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.User, erro
 	e := r.db.getExec(ctx)
 
 	const q = `
-	SELECT id, team_id, name, is_active
-	FROM users
-	WHERE id = $1
+		SELECT id, team_name, name, is_active
+		FROM users
+		WHERE id = $1
 	`
 
 	var u entity.User
 	err := e.QueryRowContext(ctx, q, id).Scan(
 		&u.ID,
-		&u.TeamID,
+		&u.TeamName,
 		&u.Name,
 		&u.IsActive,
 	)
@@ -75,17 +75,17 @@ func (r *UserRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.User, erro
 	return u, nil
 }
 
-func (r *UserRepo) ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error) {
+func (r *UserRepo) ListByTeamName(ctx context.Context, teamName string) ([]entity.User, error) {
 	e := r.db.getExec(ctx)
 
 	const q = `
-	SELECT id, team_id, name, is_active
-	FROM users
-	WHERE team_id = $1
-	ORDER BY name
+		SELECT id, team_name, name, is_active
+		FROM users
+		WHERE team_name = $1
+		ORDER BY name
 	`
 
-	rows, err := e.QueryContext(ctx, q, teamID)
+	rows, err := e.QueryContext(ctx, q, teamName)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (r *UserRepo) ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity
 		var u entity.User
 		if err := rows.Scan(
 			&u.ID,
-			&u.TeamID,
+			&u.TeamName,
 			&u.Name,
 			&u.IsActive,
 		); err != nil {
@@ -113,18 +113,18 @@ func (r *UserRepo) ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity
 	return res, nil
 }
 
-func (r *UserRepo) ListActiveByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error) {
+func (r *UserRepo) ListActiveByTeamName(ctx context.Context, teamName string) ([]entity.User, error) {
 	e := r.db.getExec(ctx)
 
 	const q = `
-	SELECT id, team_id, name, is_active
-	FROM users
-	WHERE team_id = $1
-	  AND is_active = TRUE
-	ORDER BY name
+		SELECT id, team_name, name, is_active
+		FROM users
+		WHERE team_name = $1
+		  AND is_active = TRUE
+		ORDER BY name
 	`
 
-	rows, err := e.QueryContext(ctx, q, teamID)
+	rows, err := e.QueryContext(ctx, q, teamName)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (r *UserRepo) ListActiveByTeamID(ctx context.Context, teamID uuid.UUID) ([]
 		var u entity.User
 		if err := rows.Scan(
 			&u.ID,
-			&u.TeamID,
+			&u.TeamName,
 			&u.Name,
 			&u.IsActive,
 		); err != nil {
@@ -156,9 +156,9 @@ func (r *UserRepo) SetActive(ctx context.Context, id uuid.UUID, active bool) err
 	e := r.db.getExec(ctx)
 
 	const q = `
-	UPDATE users
-	SET is_active = $2
-	WHERE id = $1
+		UPDATE users
+		SET is_active = $2
+		WHERE id = $1
 	`
 
 	res, err := e.ExecContext(ctx, q, id, active)
@@ -175,34 +175,4 @@ func (r *UserRepo) SetActive(ctx context.Context, id uuid.UUID, active bool) err
 	}
 
 	return nil
-}
-
-func (r *UserRepo) GetByIDWithTeamName(ctx context.Context, id uuid.UUID) (entity.User, string, error) {
-	e := r.db.getExec(ctx)
-
-	const q = `
-	SELECT u.id, u.team_id, u.name, u.is_active, t.name
-	FROM users u
-	JOIN teams t ON t.id = u.team_id
-	WHERE u.id = $1
-	`
-
-	var u entity.User
-	var teamName string
-
-	err := e.QueryRowContext(ctx, q, id).Scan(
-		&u.ID,
-		&u.TeamID,
-		&u.Name,
-		&u.IsActive,
-		&teamName,
-	)
-	if err == sql.ErrNoRows {
-		return entity.User{}, "", common.ErrNotFound
-	}
-	if err != nil {
-		return entity.User{}, "", err
-	}
-
-	return u, teamName, nil
 }

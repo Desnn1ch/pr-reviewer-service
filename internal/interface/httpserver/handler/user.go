@@ -22,10 +22,12 @@ func NewUserHandler(svc *service.UserService) *UserHandler {
 
 func (h *UserHandler) SetIsActive(w http.ResponseWriter, r *http.Request) {
 	var body req.SetIsActive
+
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid json")
 		return
 	}
+
 	if body.UserID == "" {
 		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "user_id is required")
 		return
@@ -72,10 +74,8 @@ func (h *UserHandler) GetReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respBody := resp.UserReviews{
+	writeJSON(w, http.StatusOK, resp.UserReviews{
 		UserID:       id.String(),
 		PullRequests: mapper.PRsToShortResponse(prs),
-	}
-
-	writeJSON(w, http.StatusOK, respBody)
+	})
 }

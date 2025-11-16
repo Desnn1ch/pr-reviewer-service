@@ -1,12 +1,11 @@
 -- +goose Up
 CREATE TABLE teams (
-                        id         UUID PRIMARY KEY,
-                        name       TEXT NOT NULL UNIQUE
+                       name TEXT PRIMARY KEY
 );
 
 CREATE TABLE users (
                         id         UUID PRIMARY KEY,
-                        team_id    UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+                        team_name  UUID NOT NULL REFERENCES teams(name) ON DELETE CASCADE,
                         name       TEXT NOT NULL,
                         is_active  BOOLEAN NOT NULL DEFAULT TRUE
 );

@@ -49,7 +49,7 @@ func main() {
 
 	repos := dbinfra.NewRepositories(db)
 
-	teamSvc := service.NewTeamService(repos.Teams, repos.Users, repos.Tx, clock)
+	teamSvc := service.NewTeamService(repos.Teams, repos.Users, repos.Tx)
 	userSvc := service.NewUserService(repos.Users, repos.PRs)
 	prSvc := service.NewPRService(repos.PRs, repos.Users, repos.Tx, clock)
 

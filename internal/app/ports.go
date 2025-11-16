@@ -19,9 +19,8 @@ type TeamRepo interface {
 
 type UserRepo interface {
 	GetByID(ctx context.Context, id uuid.UUID) (entity.User, error)
-	GetByIDWithTeamName(ctx context.Context, id uuid.UUID) (entity.User, string, error)
-	ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error)
-	ListActiveByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error)
+	ListByTeamName(ctx context.Context, teamName string) ([]entity.User, error)
+	ListActiveByTeamName(ctx context.Context, teamName string) ([]entity.User, error)
 	UpsertMany(ctx context.Context, users []entity.User) error
 	SetActive(ctx context.Context, userID uuid.UUID, isActive bool) error
 }
