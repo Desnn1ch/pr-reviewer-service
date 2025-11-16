@@ -1,0 +1,17 @@
+server:
+  address: ":8080"
+  readTimeout: "5s"
+  writeTimeout: "5s"
+  idleTimeout: "60s"
+
+database:
+  host: "db"
+  port: 5432
+  user: "app"
+  password: "app"
+  name: "app"
+  sslmode: "disable"
+  pool:
+    maxOpenConns: 15
+    maxIdleConns: 15
+    connMaxLifetime: "30m"

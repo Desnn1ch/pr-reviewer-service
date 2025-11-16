@@ -1,0 +1,213 @@
+package db
+
+import (
+	"context"
+	"database/sql"
+
+	"github.com/google/uuid"
+
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
+)
+
+type UserRepo struct {
+	db *DB
+}
+
+func NewUserRepo(db *DB) *UserRepo {
+	return &UserRepo{db: db}
+}
+
+func (r *UserRepo) UpsertMany(ctx context.Context, users []entity.User) error {
+	if len(users) == 0 {
+		return nil
+	}
+
+	e := r.db.getExec(ctx)
+
+	const q = `
+		INSERT INTO users (id, team_id, name, is_active, created_at)
+		VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (id) DO UPDATE
+		SET team_id = EXCLUDED.team_id,
+			name = EXCLUDED.name,
+			is_active = EXCLUDED.is_active;
+`
+
+	for _, u := range users {
+		_, err := e.ExecContext(ctx, q,
+			u.ID,
+			u.TeamID,
+			u.Name,
+			u.IsActive,
+			u.CreatedAt,
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *UserRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.User, error) {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		SELECT id, team_id, name, is_active, created_at
+		FROM users
+		WHERE id = $1
+`
+
+	var u entity.User
+	err := e.QueryRowContext(ctx, q, id).Scan(
+		&u.ID,
+		&u.TeamID,
+		&u.Name,
+		&u.IsActive,
+		&u.CreatedAt,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return entity.User{}, domain.ErrNotFound
+		}
+		return entity.User{}, err
+	}
+
+	return u, nil
+}
+
+func (r *UserRepo) ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error) {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		SELECT id, team_id, name, is_active, created_at
+		FROM users
+		WHERE team_id = $1
+		ORDER BY name
+`
+
+	rows, err := e.QueryContext(ctx, q, teamID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var res []entity.User
+
+	for rows.Next() {
+		var u entity.User
+		if err := rows.Scan(
+			&u.ID,
+			&u.TeamID,
+			&u.Name,
+			&u.IsActive,
+			&u.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (r *UserRepo) ListActiveByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity.User, error) {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		SELECT id, team_id, name, is_active, created_at
+		FROM users
+		WHERE team_id = $1
+		  AND is_active = TRUE
+		ORDER BY name
+`
+
+	rows, err := e.QueryContext(ctx, q, teamID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var res []entity.User
+
+	for rows.Next() {
+		var u entity.User
+		if err := rows.Scan(
+			&u.ID,
+			&u.TeamID,
+			&u.Name,
+			&u.IsActive,
+			&u.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (r *UserRepo) SetActive(ctx context.Context, id uuid.UUID, active bool) error {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		UPDATE users
+		SET is_active = $2
+		WHERE id = $1
+`
+
+	res, err := e.ExecContext(ctx, q, id, active)
+	if err != nil {
+		return err
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return domain.ErrNotFound
+	}
+
+	return nil
+}
+
+func (r *UserRepo) GetByIDWithTeamName(ctx context.Context, id uuid.UUID) (entity.User, string, error) {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		SELECT u.id, u.team_id, u.name, u.is_active, u.created_at, t.name
+		FROM users u
+		JOIN teams t ON t.id = u.team_id
+		WHERE u.id = $1
+	`
+
+	var u entity.User
+	var teamName string
+
+	err := e.QueryRowContext(ctx, q, id).Scan(
+		&u.ID,
+		&u.TeamID,
+		&u.Name,
+		&u.IsActive,
+		&u.CreatedAt,
+		&teamName,
+	)
+	if err == sql.ErrNoRows {
+		return entity.User{}, "", domain.ErrNotFound
+	}
+	if err != nil {
+		return entity.User{}, "", err
+	}
+
+	return u, teamName, nil
+}
