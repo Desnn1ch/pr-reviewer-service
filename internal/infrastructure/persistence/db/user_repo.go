@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 
 	"github.com/google/uuid"
 
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
@@ -69,7 +69,7 @@ func (r *UserRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.User, erro
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return entity.User{}, domain.ErrNotFound
+			return entity.User{}, common.ErrNotFound
 		}
 		return entity.User{}, err
 	}
@@ -179,7 +179,7 @@ func (r *UserRepo) SetActive(ctx context.Context, id uuid.UUID, active bool) err
 		return err
 	}
 	if n == 0 {
-		return domain.ErrNotFound
+		return common.ErrNotFound
 	}
 
 	return nil
@@ -207,7 +207,7 @@ func (r *UserRepo) GetByIDWithTeamName(ctx context.Context, id uuid.UUID) (entit
 		&teamName,
 	)
 	if err == sql.ErrNoRows {
-		return entity.User{}, "", domain.ErrNotFound
+		return entity.User{}, "", common.ErrNotFound
 	}
 	if err != nil {
 		return entity.User{}, "", err

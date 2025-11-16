@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"net/http"
 
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/response"
 )
 
@@ -26,19 +26,19 @@ func writeError(w http.ResponseWriter, status int, code, message string) {
 
 func handleDomainError(w http.ResponseWriter, err error) bool {
 	switch {
-	case errors.Is(err, domain.ErrTeamExists):
+	case errors.Is(err, common.ErrTeamExists):
 		writeError(w, http.StatusBadRequest, "TEAM_EXISTS", err.Error())
-	case errors.Is(err, domain.ErrPRExists):
+	case errors.Is(err, common.ErrPRExists):
 		writeError(w, http.StatusConflict, "PR_EXISTS", err.Error())
-	case errors.Is(err, domain.ErrPRMerged):
+	case errors.Is(err, common.ErrPRMerged):
 		writeError(w, http.StatusBadRequest, "PR_MERGED", err.Error())
-	case errors.Is(err, domain.ErrNotAssigned):
+	case errors.Is(err, common.ErrNotAssigned):
 		writeError(w, http.StatusBadRequest, "NOT_ASSIGNED", err.Error())
-	case errors.Is(err, domain.ErrNoCandidate):
+	case errors.Is(err, common.ErrNoCandidate):
 		writeError(w, http.StatusBadRequest, "NO_CANDIDATE", err.Error())
-	case errors.Is(err, domain.ErrNotFound):
+	case errors.Is(err, common.ErrNotFound):
 		writeError(w, http.StatusNotFound, "NOT_FOUND", err.Error())
-	case errors.Is(err, domain.ErrUserInAnotherTeam):
+	case errors.Is(err, common.ErrUserInAnotherTeam):
 		writeError(w, http.StatusBadRequest, "USER_IN_ANOTHER_TEAM", err.Error())
 	default:
 		return false

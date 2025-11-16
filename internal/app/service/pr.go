@@ -2,12 +2,12 @@ package service
 
 import (
 	"context"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"time"
 
 	"github.com/google/uuid"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/app"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
@@ -15,13 +15,15 @@ type PRService struct {
 	prs   app.PRRepo
 	users app.UserRepo
 	tx    app.TxManager
+	clock common.Clock
 }
 
-func NewPRService(prs app.PRRepo, users app.UserRepo, tx app.TxManager) *PRService {
+func NewPRService(prs app.PRRepo, users app.UserRepo, tx app.TxManager, clock common.Clock) *PRService {
 	return &PRService{
 		prs:   prs,
 		users: users,
 		tx:    tx,
+		clock: clock,
 	}
 }
 
@@ -49,14 +51,12 @@ func (s *PRService) Create(ctx context.Context, id uuid.UUID, title string, auth
 		reviewers = append(reviewers, candidates[i])
 	}
 
-	now := time.Now().UTC()
-
 	pr := entity.PR{
 		ID:        id,
 		Title:     title,
 		AuthorID:  authorID,
 		Status:    entity.StatusOpen,
-		CreatedAt: now,
+		CreatedAt: s.clock.Now(),
 		Reviewers: reviewers,
 	}
 
@@ -84,7 +84,7 @@ func (s *PRService) Merge(ctx context.Context, id uuid.UUID) (entity.PR, error) 
 			return nil
 		}
 
-		now := time.Now().UTC()
+		now := s.clock.Now()
 		pr.Status = entity.StatusMerged
 		pr.MergedAt = &now
 
@@ -112,7 +112,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 		}
 
 		if pr.IsMerged() {
-			return domain.ErrPRMerged
+			return common.ErrPRMerged
 		}
 
 		idx := -1
@@ -123,7 +123,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 			}
 		}
 		if idx == -1 {
-			return domain.ErrNotAssigned
+			return common.ErrNotAssigned
 		}
 
 		oldReviewer, err := s.users.GetByID(txCtx, oldReviewerID)
@@ -158,7 +158,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 		}
 
 		if len(candidates) == 0 {
-			return domain.ErrNoCandidate
+			return common.ErrNoCandidate
 		}
 
 		newReviewerID := candidates[0]

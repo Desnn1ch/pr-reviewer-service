@@ -3,12 +3,12 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"log"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
@@ -55,7 +55,7 @@ func (r *PRRepo) Create(ctx context.Context, pr entity.PR) error {
 	)
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23505" {
-			return domain.ErrPRExists
+			return common.ErrPRExists
 		}
 		return err
 	}
@@ -100,7 +100,7 @@ func (r *PRRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.PR, error) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return entity.PR{}, domain.ErrNotFound
+			return entity.PR{}, common.ErrNotFound
 		}
 		return entity.PR{}, err
 	}
@@ -146,7 +146,7 @@ func (r *PRRepo) Update(ctx context.Context, pr entity.PR) error {
 		return err
 	}
 	if n == 0 {
-		return domain.ErrNotFound
+		return common.ErrNotFound
 	}
 
 	const qDel = `DELETE FROM pr_reviewers WHERE pr_id = $1`

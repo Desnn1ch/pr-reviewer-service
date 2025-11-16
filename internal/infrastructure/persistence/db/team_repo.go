@@ -3,11 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
@@ -34,7 +34,7 @@ func (r *TeamRepo) Create(ctx context.Context, team entity.Team) error {
 	)
 	if err != nil {
 		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code == "23505" {
-			return domain.ErrTeamExists
+			return common.ErrTeamExists
 		}
 		return err
 	}
@@ -59,7 +59,7 @@ func (r *TeamRepo) GetByName(ctx context.Context, name string) (entity.Team, err
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return entity.Team{}, domain.ErrNotFound
+			return entity.Team{}, common.ErrNotFound
 		}
 		return entity.Team{}, err
 	}
@@ -83,7 +83,7 @@ func (r *TeamRepo) GetByID(ctx context.Context, id uuid.UUID) (entity.Team, erro
 		&t.CreatedAt,
 	)
 	if err == sql.ErrNoRows {
-		return entity.Team{}, domain.ErrNotFound
+		return entity.Team{}, common.ErrNotFound
 	}
 	if err != nil {
 		return entity.Team{}, err

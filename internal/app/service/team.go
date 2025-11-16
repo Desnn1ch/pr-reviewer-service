@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 	"errors"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"time"
 
 	"github.com/google/uuid"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/app"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
@@ -16,26 +16,28 @@ type TeamService struct {
 	teams app.TeamRepo
 	users app.UserRepo
 	tx    app.TxManager
+	clock common.Clock
 }
 
-func NewTeamService(teams app.TeamRepo, users app.UserRepo, tx app.TxManager) *TeamService {
+func NewTeamService(teams app.TeamRepo, users app.UserRepo, tx app.TxManager, clock common.Clock) *TeamService {
 	return &TeamService{
 		teams: teams,
 		users: users,
 		tx:    tx,
+		clock: clock,
 	}
 }
 
 func (s *TeamService) CreateTeam(ctx context.Context, name string, members []entity.User) (entity.Team, []entity.User, error) {
 	_, err := s.teams.GetByName(ctx, name)
 	if err == nil {
-		return entity.Team{}, nil, domain.ErrTeamExists
+		return entity.Team{}, nil, common.ErrTeamExists
 	}
-	if err != nil && err != domain.ErrNotFound {
+	if err != nil && err != common.ErrNotFound {
 		return entity.Team{}, nil, err
 	}
 
-	now := time.Now().UTC()
+	now := s.clock.Now()
 
 	team := entity.Team{
 		ID:        uuid.New(),
@@ -56,11 +58,11 @@ func (s *TeamService) CreateTeam(ctx context.Context, name string, members []ent
 	err = s.tx.InTx(ctx, func(txCtx context.Context) error {
 		for _, u := range users {
 			existing, err := s.users.GetByID(txCtx, u.ID)
-			if err != nil && !errors.Is(err, domain.ErrNotFound) {
+			if err != nil && !errors.Is(err, common.ErrNotFound) {
 				return err
 			}
 			if err == nil && existing.TeamID != team.ID {
-				return domain.ErrUserInAnotherTeam
+				return common.ErrUserInAnotherTeam
 			}
 		}
 
