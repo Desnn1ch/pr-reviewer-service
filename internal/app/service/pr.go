@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 
 	"github.com/google/uuid"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/app"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 

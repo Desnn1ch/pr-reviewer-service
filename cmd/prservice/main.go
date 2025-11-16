@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"log"
 	"net/http"
 	"os/signal"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/app/service"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/config"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	dbinfra "github.com/Desnn1ch/pr-reviewer-service/internal/infrastructure/persistence/db"
 	httpserver "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/handler"
