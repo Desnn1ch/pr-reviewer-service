@@ -30,4 +30,6 @@ type PRRepo interface {
 	GetByID(ctx context.Context, id uuid.UUID) (entity.PR, error)
 	Update(ctx context.Context, pr entity.PR) error
 	ListByReviewerID(ctx context.Context, reviewerID uuid.UUID) ([]entity.PR, error)
+
+	ListReviewerStats(ctx context.Context, teamName string) ([]entity.ReviewerStats, error)
 }

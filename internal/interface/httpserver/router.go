@@ -11,6 +11,7 @@ func NewRouter(
 	team *handler.TeamHandler,
 	user *handler.UserHandler,
 	pr *handler.PRHandler,
+	st *handler.StatsHandler,
 ) http.Handler {
 	r := chi.NewRouter()
 
@@ -19,6 +20,7 @@ func NewRouter(
 	registerTeamRoutes(r, team)
 	registerUserRoutes(r, user)
 	registerPRRoutes(r, pr)
+	registerStatsRoutes(r, st)
 
 	return r
 }
@@ -42,5 +44,11 @@ func registerPRRoutes(r chi.Router, h *handler.PRHandler) {
 		r.Post("/create", h.Create)
 		r.Post("/merge", h.Merge)
 		r.Post("/reassign", h.Reassign)
+	})
+}
+
+func registerStatsRoutes(r chi.Router, h *handler.StatsHandler) {
+	r.Route("/stats", func(r chi.Router) {
+		r.Get("/reviewers", h.GetReviewerStats)
 	})
 }

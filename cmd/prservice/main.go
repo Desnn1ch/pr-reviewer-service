@@ -52,12 +52,14 @@ func main() {
 	teamSvc := service.NewTeamService(repos.Teams, repos.Users, repos.Tx)
 	userSvc := service.NewUserService(repos.Users, repos.PRs)
 	prSvc := service.NewPRService(repos.PRs, repos.Users, repos.Tx, clock)
+	statsSvc := service.NewStatsService(repos.PRs)
 
 	teamHandler := handler.NewTeamHandler(teamSvc)
 	userHandler := handler.NewUserHandler(userSvc)
 	prHandler := handler.NewPRHandler(prSvc)
+	statsHandler := handler.NewStatsHandler(statsSvc)
 
-	router := httpserver.NewRouter(teamHandler, userHandler, prHandler)
+	router := httpserver.NewRouter(teamHandler, userHandler, prHandler, statsHandler)
 
 	srv := &http.Server{
 		Addr:         cfg.Server.Address,

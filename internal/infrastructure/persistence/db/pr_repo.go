@@ -245,3 +245,49 @@ func (r *PRRepo) loadReviewers(ctx context.Context, prID uuid.UUID) ([]uuid.UUID
 
 	return reviewers, nil
 }
+
+func (r *PRRepo) ListReviewerStats(ctx context.Context, teamName string) ([]entity.ReviewerStats, error) {
+	e := r.db.getExec(ctx)
+
+	const q = `
+		SELECT
+			u.id,
+			u.name,
+			u.team_name,
+			COUNT(*) AS assigned_open_prs
+		FROM pr_reviewers prr
+		JOIN pull_requests p ON p.id = prr.pr_id
+		JOIN users u         ON u.id = prr.reviewer_id
+		WHERE p.status = 'OPEN'
+		  AND u.team_name = $1
+		GROUP BY u.id, u.name, u.team_name
+		ORDER BY assigned_open_prs DESC
+	`
+
+	rows, err := e.QueryContext(ctx, q, teamName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var res []entity.ReviewerStats
+
+	for rows.Next() {
+		var s entity.ReviewerStats
+		if err := rows.Scan(
+			&s.UserID,
+			&s.Username,
+			&s.TeamName,
+			&s.AssignedOpenPRs,
+		); err != nil {
+			return nil, err
+		}
+		res = append(res, s)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
