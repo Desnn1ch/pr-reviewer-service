@@ -4,8 +4,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
-	req "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/request"
-	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/response"
+	req "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/request"
+	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/response"
 )
 
 func CreatePRRequestToArgs(r req.CreatePR) (uuid.UUID, string, uuid.UUID, error) {

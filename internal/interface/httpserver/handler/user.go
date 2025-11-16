@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/app/service"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/mapper"
-	req "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/request"
-	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/response"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/mapper"
+	req "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/request"
+	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/response"
 )
 
 type UserHandler struct {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
-	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/response"
+	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/response"
 )
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

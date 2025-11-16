@@ -12,8 +12,8 @@ import (
 	"github.com/Desnn1ch/pr-reviewer-service/internal/config"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	dbinfra "github.com/Desnn1ch/pr-reviewer-service/internal/infrastructure/persistence/db"
-	httpserver "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/handler"
+	httpserver "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/handler"
 )
 
 func main() {

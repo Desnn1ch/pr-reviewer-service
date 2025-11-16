@@ -1,9 +1,9 @@
-package http_server
+package httpserver
 
 import (
 	"net/http"
 
-	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/handler"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/handler"
 	"github.com/go-chi/chi/v5"
 )
 

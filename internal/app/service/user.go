@@ -21,22 +21,22 @@ func NewUserService(users app.UserRepo, prs app.PRRepo) *UserService {
 	}
 }
 
-func (s *UserService) SetActive(ctx context.Context, userID uuid.UUID, isActive bool) (entity.User, string, error) {
-	user, teamName, err := s.users.GetByIDWithTeamName(ctx, userID)
+func (s *UserService) SetActive(ctx context.Context, userID uuid.UUID, isActive bool) (entity.User, error) {
+	user, err := s.users.GetByID(ctx, userID)
 	if err != nil {
-		return entity.User{}, "", err
+		return entity.User{}, err
 	}
 
 	if user.IsActive == isActive {
-		return user, teamName, nil
+		return user, nil
 	}
 
 	if err := s.users.SetActive(ctx, userID, isActive); err != nil {
-		return entity.User{}, "", err
+		return entity.User{}, err
 	}
 
 	user.IsActive = isActive
-	return user, teamName, nil
+	return user, nil
 }
 
 func (s *UserService) GetReviews(ctx context.Context, userID uuid.UUID) ([]entity.PR, error) {
