@@ -43,7 +43,9 @@ func TestUserHandler_SetIsActive_BadRequests(t *testing.T) {
 			h.SetIsActive(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)
@@ -91,7 +93,9 @@ func TestUserHandler_GetReview_BadRequests(t *testing.T) {
 			h.GetReview(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)

@@ -36,7 +36,6 @@ var (
 func TestMain(m *testing.M) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
 	cancelTest = cancel
-	defer cancel()
 
 	req := testcontainers.ContainerRequest{
 		Image:        "postgres:16",
@@ -99,6 +98,7 @@ func TestMain(m *testing.M) {
 
 	code := m.Run()
 
+	cancel()
 	httpSrv.Close()
 	_ = db.Close()
 	_ = pgC.Terminate(context.Background())
@@ -223,7 +223,9 @@ func testPost(t *testing.T, path string, body any, wantStatus int, out any) {
 	if err != nil {
 		t.Fatalf("do request: %v", err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		_ = res.Body.Close()
+	}()
 	if res.StatusCode != wantStatus {
 		t.Fatalf("status %s: got %d want %d", path, res.StatusCode, wantStatus)
 	}
@@ -244,7 +246,9 @@ func testGet(t *testing.T, path string, wantStatus int, out any) {
 	if err != nil {
 		t.Fatalf("do request: %v", err)
 	}
-	defer res.Body.Close()
+	defer func() {
+		_ = res.Body.Close()
+	}()
 	if res.StatusCode != wantStatus {
 		t.Fatalf("status %s: got %d want %d", path, res.StatusCode, wantStatus)
 	}
