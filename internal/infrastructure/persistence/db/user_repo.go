@@ -91,7 +91,9 @@ func (r *UserRepo) ListByTeamID(ctx context.Context, teamID uuid.UUID) ([]entity
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	var res []entity.User
 
@@ -131,7 +133,9 @@ func (r *UserRepo) ListActiveByTeamID(ctx context.Context, teamID uuid.UUID) ([]
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	var res []entity.User
 
