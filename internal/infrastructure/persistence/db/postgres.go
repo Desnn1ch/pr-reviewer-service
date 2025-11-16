@@ -48,7 +48,9 @@ func New(ctx context.Context, cfg Config) (*DB, error) {
 		return nil, err
 	}
 
-	goose.SetDialect("postgres")
+	if err := goose.SetDialect("postgres"); err != nil {
+		return nil, fmt.Errorf("goose.SetDialect: %w", err)
+	}
 	if err := goose.Up(db, cfg.MigrationsDir); err != nil {
 		_ = db.Close()
 		return nil, err

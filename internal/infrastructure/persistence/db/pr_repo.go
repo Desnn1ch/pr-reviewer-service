@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"database/sql"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -187,7 +188,11 @@ func (r *PRRepo) ListByReviewerID(ctx context.Context, reviewerID uuid.UUID) ([]
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Printf("rows close error: %v", cerr)
+		}
+	}()
 
 	var result []entity.PR
 
@@ -237,7 +242,11 @@ func (r *PRRepo) loadReviewers(ctx context.Context, prID uuid.UUID) ([]uuid.UUID
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if cerr := rows.Close(); cerr != nil {
+			log.Printf("rows close error: %v", cerr)
+		}
+	}()
 
 	var reviewers []uuid.UUID
 

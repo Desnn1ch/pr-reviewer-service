@@ -8,6 +8,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+func Getenv(key, def string) string {
+	v := os.Getenv(key)
+	if v == "" {
+		return def
+	}
+	return v
+}
+
 type Duration struct {
 	time.Duration
 }

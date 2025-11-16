@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 	"os/signal"
 	"syscall"
 	"time"
@@ -16,23 +15,16 @@ import (
 	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/handler"
 )
 
-func getenv(key, def string) string {
-	v := os.Getenv(key)
-	if v == "" {
-		return def
-	}
-	return v
-}
-
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	configPath := getenv("CONFIG_PATH", "internal/config/config.yaml")
+	configPath := config.Getenv("CONFIG_PATH", "internal/config/config.yaml")
 
 	cfg, err := config.Load(configPath)
 	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
+		log.Printf("failed to load config: %v", err)
+		return
 	}
 
 	db, err := dbinfra.New(ctx, dbinfra.Config{
@@ -43,7 +35,8 @@ func main() {
 		ConnMaxLifetime: cfg.Database.Pool.ConnMaxLifetime.Duration,
 	})
 	if err != nil {
-		log.Fatalf("failed to init db: %v", err)
+		log.Printf("failed to init db: %v", err)
+		return
 	}
 	defer func() {
 		if err := db.Close(); err != nil {
