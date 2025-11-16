@@ -29,31 +29,5 @@
 
 ---
 
-## 🛠 Стек
-
-**Язык и фреймворки**
-
-- Go (1.22+)
-- `net/http` + `github.com/go-chi/chi/v5` — роутер и middleware
-- `database/sql` + `github.com/lib/pq` — работа с PostgreSQL
-- `github.com/pressly/goose/v3` — миграции
-- `github.com/google/uuid` — UUID-идентификаторы
-
-**Инфраструктура**
-
-- PostgreSQL 16
-- Docker, Docker Compose
-
-**Тестирование**
-
-- `testing` стандартный
-- `github.com/testcontainers/testcontainers-go` — e2e с реальным Postgres в контейнере
-
----
-
-## 🚀 Запуск
-
-### Вариант 1. Docker Compose (рекомендуется)
-
 ```bash
 docker-compose up --build
