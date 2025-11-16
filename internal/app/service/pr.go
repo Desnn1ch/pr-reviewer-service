@@ -131,7 +131,7 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 			return err
 		}
 
-		activeUsers, err := s.users.ListActiveByTeamName(ctx, oldReviewer.TeamName)
+		activeUsers, err := s.users.ListActiveByTeamName(txCtx, oldReviewer.TeamName)
 		if err != nil {
 			return err
 		}
@@ -170,7 +170,6 @@ func (s *PRService) ReassignReviewer(ctx context.Context, prID, oldReviewerID uu
 		result = pr
 		return nil
 	})
-
 	if err != nil {
 		return entity.PR{}, err
 	}

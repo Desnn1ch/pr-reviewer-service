@@ -20,23 +20,6 @@ func NewPRRepo(db *DB) *PRRepo {
 	return &PRRepo{db: db}
 }
 
-func (r *PRRepo) Exists(ctx context.Context, id uuid.UUID) (bool, error) {
-	q := r.db.getExec(ctx)
-
-	const query = `SELECT 1 FROM pull_requests WHERE id = $1`
-
-	var dummy int
-	err := q.QueryRowContext(ctx, query, id).Scan(&dummy)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return false, nil
-		}
-		return false, err
-	}
-
-	return true, nil
-}
-
 func (r *PRRepo) Create(ctx context.Context, pr entity.PR) error {
 	e := r.db.getExec(ctx)
 

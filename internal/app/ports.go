@@ -26,7 +26,6 @@ type UserRepo interface {
 }
 
 type PRRepo interface {
-	Exists(ctx context.Context, id uuid.UUID) (bool, error)
 	Create(ctx context.Context, pr entity.PR) error
 	GetByID(ctx context.Context, id uuid.UUID) (entity.PR, error)
 	Update(ctx context.Context, pr entity.PR) error

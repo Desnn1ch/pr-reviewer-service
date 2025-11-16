@@ -29,6 +29,11 @@ func (h *TeamHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(body.Members) == 0 {
+		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "team must have at least one member")
+		return
+	}
+
 	name, members, err := mapper.TeamAddRequestToArgs(body)
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid team members")
