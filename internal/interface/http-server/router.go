@@ -3,11 +3,8 @@ package http_server
 import (
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
-
 	"github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/handler"
+	"github.com/go-chi/chi/v5"
 )
 
 func NewRouter(
@@ -17,33 +14,33 @@ func NewRouter(
 ) http.Handler {
 	r := chi.NewRouter()
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
+	UseMiddlewares(r)
 
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8081"},
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Content-Type", "Authorization"},
-		AllowCredentials: false,
-		MaxAge:           300,
-	}))
-
-	r.Route("/team", func(r chi.Router) {
-		r.Post("/add", team.Add)
-		r.Get("/get", team.Get)
-	})
-
-	r.Route("/users", func(r chi.Router) {
-		r.Post("/setIsActive", user.SetIsActive)
-		r.Get("/getReview", user.GetReview)
-	})
-
-	r.Route("/pullRequest", func(r chi.Router) {
-		r.Post("/create", pr.Create)
-		r.Post("/merge", pr.Merge)
-		r.Post("/reassign", pr.Reassign)
-	})
+	registerTeamRoutes(r, team)
+	registerUserRoutes(r, user)
+	registerPRRoutes(r, pr)
 
 	return r
+}
+
+func registerTeamRoutes(r chi.Router, h *handler.TeamHandler) {
+	r.Route("/team", func(r chi.Router) {
+		r.Post("/add", h.Add)
+		r.Get("/get", h.Get)
+	})
+}
+
+func registerUserRoutes(r chi.Router, h *handler.UserHandler) {
+	r.Route("/users", func(r chi.Router) {
+		r.Post("/setIsActive", h.SetIsActive)
+		r.Get("/getReview", h.GetReview)
+	})
+}
+
+func registerPRRoutes(r chi.Router, h *handler.PRHandler) {
+	r.Route("/pullRequest", func(r chi.Router) {
+		r.Post("/create", h.Create)
+		r.Post("/merge", h.Merge)
+		r.Post("/reassign", h.Reassign)
+	})
 }
