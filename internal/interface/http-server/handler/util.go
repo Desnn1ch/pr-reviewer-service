@@ -3,9 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"net/http"
 
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	resp "github.com/Desnn1ch/pr-reviewer-service/internal/interface/http-server/dto/response"
 )
 

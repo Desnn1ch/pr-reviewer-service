@@ -3,11 +3,11 @@ package db
 import (
 	"context"
 	"database/sql"
-	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
