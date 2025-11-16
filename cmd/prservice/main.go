@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
 	"log"
 	"net/http"
 	"os/signal"
@@ -44,11 +45,13 @@ func main() {
 		}
 	}()
 
+	clock := common.StandardClock{}
+
 	repos := dbinfra.NewRepositories(db)
 
-	teamSvc := service.NewTeamService(repos.Teams, repos.Users, repos.Tx)
+	teamSvc := service.NewTeamService(repos.Teams, repos.Users, repos.Tx, clock)
 	userSvc := service.NewUserService(repos.Users, repos.PRs)
-	prSvc := service.NewPRService(repos.PRs, repos.Users, repos.Tx)
+	prSvc := service.NewPRService(repos.PRs, repos.Users, repos.Tx, clock)
 
 	teamHandler := handler.NewTeamHandler(teamSvc)
 	userHandler := handler.NewUserHandler(userSvc)

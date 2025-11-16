@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/common"
-	"time"
 
 	"github.com/google/uuid"
 
