@@ -48,7 +48,9 @@ func TestPRHandler_Create_BadRequests(t *testing.T) {
 			h.Create(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)
@@ -98,7 +100,9 @@ func TestPRHandler_Merge_BadRequests(t *testing.T) {
 			h.Merge(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)
@@ -153,7 +157,9 @@ func TestPRHandler_Reassign_BadRequests(t *testing.T) {
 			h.Reassign(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)
