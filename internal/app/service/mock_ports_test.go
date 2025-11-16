@@ -213,3 +213,8 @@ func (r *fakePRRepo) ListByReviewerID(ctx context.Context, reviewerID uuid.UUID)
 
 	return res, nil
 }
+
+func (r *fakePRRepo) ListReviewerStats(ctx context.Context, teamName string) ([]entity.ReviewerStats, error) {
+	// for unit test stats - over
+	return nil, nil
+}
