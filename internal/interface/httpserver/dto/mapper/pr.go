@@ -9,9 +9,16 @@ import (
 )
 
 func CreatePRRequestToArgs(r req.CreatePR) (uuid.UUID, string, uuid.UUID, error) {
-	prID, err := uuid.Parse(r.PullRequestID)
-	if err != nil {
-		return uuid.Nil, "", uuid.Nil, err
+	var prID uuid.UUID
+	var err error
+
+	if r.PullRequestID == "" {
+		prID = uuid.New()
+	} else {
+		prID, err = uuid.Parse(r.PullRequestID)
+		if err != nil {
+			return uuid.Nil, "", uuid.Nil, err
+		}
 	}
 
 	authorID, err := uuid.Parse(r.AuthorID)

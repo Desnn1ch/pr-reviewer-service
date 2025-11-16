@@ -5,7 +5,7 @@ CREATE TABLE teams (
 
 CREATE TABLE users (
                         id         UUID PRIMARY KEY,
-                        team_name  UUID NOT NULL REFERENCES teams(name) ON DELETE CASCADE,
+                        team_name  TEXT NOT NULL REFERENCES teams(name) ON DELETE CASCADE,
                         name       TEXT NOT NULL,
                         is_active  BOOLEAN NOT NULL DEFAULT TRUE
 );

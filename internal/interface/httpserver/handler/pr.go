@@ -24,7 +24,7 @@ func (h *PRHandler) Create(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "invalid json")
 		return
 	}
-	if body.PullRequestID == "" || body.PullRequestName == "" || body.AuthorID == "" {
+	if body.PullRequestName == "" || body.AuthorID == "" {
 		writeError(w, http.StatusBadRequest, "BAD_REQUEST", "missing fields")
 		return
 	}
