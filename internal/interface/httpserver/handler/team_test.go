@@ -48,7 +48,9 @@ func TestTeamHandler_Add_BadRequests(t *testing.T) {
 			h.Add(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)
@@ -93,7 +95,9 @@ func TestTeamHandler_Get_BadRequests(t *testing.T) {
 			h.Get(w, req)
 
 			res := w.Result()
-			defer res.Body.Close()
+			defer func() {
+				_ = res.Body.Close()
+			}()
 
 			if res.StatusCode != tt.wantStatus {
 				t.Fatalf("status: got %d, want %d", res.StatusCode, tt.wantStatus)

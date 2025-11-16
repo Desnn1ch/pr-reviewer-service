@@ -10,6 +10,8 @@ import (
 	respdto "github.com/Desnn1ch/pr-reviewer-service/internal/interface/httpserver/dto/response"
 )
 
+const BadRequestCode = "BAD_REQUEST"
+
 func TestPRHandler_Create_BadRequests(t *testing.T) {
 	h := &PRHandler{svc: nil}
 
@@ -60,8 +62,8 @@ func TestPRHandler_Create_BadRequests(t *testing.T) {
 			if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
 				t.Fatalf("decode error response: %v", err)
 			}
-			if er.Error.Code != "BAD_REQUEST" {
-				t.Errorf("error.code: got %q, want %q", er.Error.Code, "BAD_REQUEST")
+			if er.Error.Code != BadRequestCode {
+				t.Errorf("error.code: got %q, want %q", er.Error.Code, BadRequestCode)
 			}
 		})
 	}
@@ -112,8 +114,8 @@ func TestPRHandler_Merge_BadRequests(t *testing.T) {
 			if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
 				t.Fatalf("decode error response: %v", err)
 			}
-			if er.Error.Code != "BAD_REQUEST" {
-				t.Errorf("error.code: got %q, want %q", er.Error.Code, "BAD_REQUEST")
+			if er.Error.Code != BadRequestCode {
+				t.Errorf("error.code: got %q, want %q", er.Error.Code, BadRequestCode)
 			}
 		})
 	}
@@ -169,8 +171,8 @@ func TestPRHandler_Reassign_BadRequests(t *testing.T) {
 			if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
 				t.Fatalf("decode error response: %v", err)
 			}
-			if er.Error.Code != "BAD_REQUEST" {
-				t.Errorf("error.code: got %q, want %q", er.Error.Code, "BAD_REQUEST")
+			if er.Error.Code != BadRequestCode {
+				t.Errorf("error.code: got %q, want %q", er.Error.Code, BadRequestCode)
 			}
 		})
 	}

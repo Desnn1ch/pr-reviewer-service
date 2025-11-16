@@ -10,6 +10,8 @@ import (
 	"github.com/Desnn1ch/pr-reviewer-service/internal/domain/entity"
 )
 
+const teamName = "backend"
+
 func TestPRService_Create_AssignsReviewers(t *testing.T) {
 	ctx := context.Background()
 
@@ -18,17 +20,15 @@ func TestPRService_Create_AssignsReviewers(t *testing.T) {
 	tx := fakeTx{}
 	clock := common.StandardClock{}
 
-	team := "backend"
-
 	authorID := uuid.New()
 	r1 := uuid.New()
 	r2 := uuid.New()
 	r3 := uuid.New()
 
-	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: team, Name: "Author", IsActive: true}
-	userRepo.users[r1] = entity.User{ID: r1, TeamName: team, Name: "R1", IsActive: true}
-	userRepo.users[r2] = entity.User{ID: r2, TeamName: team, Name: "R2", IsActive: true}
-	userRepo.users[r3] = entity.User{ID: r3, TeamName: team, Name: "R3", IsActive: true}
+	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: teamName, Name: "Author", IsActive: true}
+	userRepo.users[r1] = entity.User{ID: r1, TeamName: teamName, Name: "R1", IsActive: true}
+	userRepo.users[r2] = entity.User{ID: r2, TeamName: teamName, Name: "R2", IsActive: true}
+	userRepo.users[r3] = entity.User{ID: r3, TeamName: teamName, Name: "R3", IsActive: true}
 
 	svc := NewPRService(prRepo, userRepo, tx, clock)
 
@@ -66,12 +66,11 @@ func TestPRService_Create_NoOtherActiveUsers(t *testing.T) {
 	tx := fakeTx{}
 	clock := common.StandardClock{}
 
-	team := "backend"
 	authorID := uuid.New()
 
 	userRepo.users[authorID] = entity.User{
 		ID:       authorID,
-		TeamName: team,
+		TeamName: teamName,
 		Name:     "Author",
 		IsActive: true,
 	}
@@ -171,15 +170,13 @@ func TestPRService_Reassign_OldReviewerNotAssigned(t *testing.T) {
 	tx := fakeTx{}
 	clock := common.StandardClock{}
 
-	team := "backend"
-
 	authorID := uuid.New()
 	oldID := uuid.New()
 	otherReviewer := uuid.New()
 
-	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: team, Name: "Author", IsActive: true}
-	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: team, Name: "Old", IsActive: true}
-	userRepo.users[otherReviewer] = entity.User{ID: otherReviewer, TeamName: team, Name: "Other", IsActive: true}
+	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: teamName, Name: "Author", IsActive: true}
+	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: teamName, Name: "Old", IsActive: true}
+	userRepo.users[otherReviewer] = entity.User{ID: otherReviewer, TeamName: teamName, Name: "Other", IsActive: true}
 
 	prID := uuid.New()
 	prRepo.prs[prID] = entity.PR{
@@ -209,14 +206,12 @@ func TestPRService_Reassign_NoCandidate(t *testing.T) {
 	tx := fakeTx{}
 	clock := common.StandardClock{}
 
-	team := "backend"
-
 	oldID := uuid.New()
 	authorID := uuid.New()
 	prID := uuid.New()
 
-	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: team, Name: "Old", IsActive: true}
-	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: team, Name: "Author", IsActive: true}
+	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: teamName, Name: "Old", IsActive: true}
+	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: teamName, Name: "Author", IsActive: true}
 
 	prRepo.prs[prID] = entity.PR{
 		ID:        prID,
@@ -245,17 +240,15 @@ func TestPRService_Reassign_Success(t *testing.T) {
 	tx := fakeTx{}
 	clock := common.StandardClock{}
 
-	team := "backend"
-
 	authorID := uuid.New()
 	oldID := uuid.New()
 	otherReviewer := uuid.New()
 	newCandidate := uuid.New()
 
-	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: team, Name: "Author", IsActive: true}
-	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: team, Name: "Old", IsActive: true}
-	userRepo.users[otherReviewer] = entity.User{ID: otherReviewer, TeamName: team, Name: "Other", IsActive: true}
-	userRepo.users[newCandidate] = entity.User{ID: newCandidate, TeamName: team, Name: "New", IsActive: true}
+	userRepo.users[authorID] = entity.User{ID: authorID, TeamName: teamName, Name: "Author", IsActive: true}
+	userRepo.users[oldID] = entity.User{ID: oldID, TeamName: teamName, Name: "Old", IsActive: true}
+	userRepo.users[otherReviewer] = entity.User{ID: otherReviewer, TeamName: teamName, Name: "Other", IsActive: true}
+	userRepo.users[newCandidate] = entity.User{ID: newCandidate, TeamName: teamName, Name: "New", IsActive: true}
 
 	prID := uuid.New()
 	prRepo.prs[prID] = entity.PR{
