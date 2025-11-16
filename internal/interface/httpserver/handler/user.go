@@ -39,7 +39,7 @@ func (h *UserHandler) SetIsActive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, teamName, err := h.svc.SetActive(r.Context(), id, isActive)
+	user, err := h.svc.SetActive(r.Context(), id, isActive)
 	if err != nil {
 		if handleDomainError(w, err) {
 			return
@@ -48,7 +48,7 @@ func (h *UserHandler) SetIsActive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userResp := mapper.UserToResponse(user, teamName)
+	userResp := mapper.UserToResponse(user)
 	writeJSON(w, http.StatusOK, resp.SetIsActive{User: userResp})
 }
 
@@ -74,8 +74,10 @@ func (h *UserHandler) GetReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, resp.UserReviews{
+	respBody := resp.UserReviews{
 		UserID:       id.String(),
 		PullRequests: mapper.PRsToShortResponse(prs),
-	})
+	}
+
+	writeJSON(w, http.StatusOK, respBody)
 }
