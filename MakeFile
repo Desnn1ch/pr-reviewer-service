@@ -1,0 +1,41 @@
+APP_CMD=./cmd/prservice
+BIN_DIR=./bin
+BIN_NAME=pr-reviewer-service
+
+CONFIG_PATH?=config.yml
+
+GO=go
+
+.PHONY: all build run test unit-test e2e lint docker-up docker-up-detached docker-down k6
+
+all: build
+
+build:
+	mkdir -p $(BIN_DIR)
+	$(GO) build -o $(BIN_DIR)/$(BIN_NAME) $(APP_CMD)
+
+run:
+	CONFIG_PATH=$(CONFIG_PATH) $(GO) run $(APP_CMD)
+
+test: unit-test e2e
+
+unit-test:
+	$(GO) test ./internal/... -count=1
+
+e2e:
+	$(GO) test ./test/... -count=1
+
+lint:
+	golangci-lint run ./...
+
+docker-up:
+	docker-compose up --build
+
+docker-up-detached:
+	docker-compose up -d --build
+
+docker-down:
+	docker-compose down -v
+
+k6: docker-up-detached
+	k6 run ./k6/scenario.js

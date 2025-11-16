@@ -23,7 +23,6 @@ func TestTeamService_CreateTeam_Success(t *testing.T) {
 		{ID: uuid.New(), Name: "Alice", IsActive: true},
 		{ID: uuid.New(), Name: "Bob", IsActive: false},
 	}
-	teamName := "backend"
 
 	team, users, err := svc.CreateTeam(ctx, teamName, members)
 	if err != nil {
@@ -64,7 +63,7 @@ func TestTeamService_CreateTeam_TeamExists(t *testing.T) {
 	teamRepo := newFakeTeamRepo()
 	userRepo := newFakeUserRepo()
 
-	existingName := "backend"
+	existingName := teamName
 	teamRepo.teams[existingName] = entity.Team{Name: existingName}
 
 	svc := NewTeamService(teamRepo, userRepo, fakeTx{})
@@ -97,7 +96,7 @@ func TestTeamService_CreateTeam_UserInAnotherTeam(t *testing.T) {
 		{ID: existingID, Name: "Existing", IsActive: true},
 	}
 
-	_, _, err := svc.CreateTeam(ctx, "backend", members)
+	_, _, err := svc.CreateTeam(ctx, teamName, members)
 	if !errors.Is(err, common.ErrUserInAnotherTeam) {
 		t.Fatalf("expected ErrUserInAnotherTeam, got %v", err)
 	}
@@ -113,7 +112,6 @@ func TestTeamService_GetTeam_Success(t *testing.T) {
 	teamRepo := newFakeTeamRepo()
 	userRepo := newFakeUserRepo()
 
-	teamName := "backend"
 	teamRepo.teams[teamName] = entity.Team{Name: teamName}
 
 	u1 := entity.User{ID: uuid.New(), TeamName: teamName, Name: "Alice", IsActive: true}

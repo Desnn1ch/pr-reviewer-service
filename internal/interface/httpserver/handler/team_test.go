@@ -60,8 +60,8 @@ func TestTeamHandler_Add_BadRequests(t *testing.T) {
 			if err := json.NewDecoder(res.Body).Decode(&er); err != nil {
 				t.Fatalf("decode error response: %v", err)
 			}
-			if er.Error.Code != "BAD_REQUEST" {
-				t.Errorf("error.code: got %q, want %q", er.Error.Code, "BAD_REQUEST")
+			if er.Error.Code != BadRequestCode {
+				t.Errorf("error.code: got %q, want %q", er.Error.Code, BadRequestCode)
 			}
 		})
 	}

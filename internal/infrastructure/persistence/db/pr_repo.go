@@ -268,7 +268,9 @@ func (r *PRRepo) ListReviewerStats(ctx context.Context, teamName string) ([]enti
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	var res []entity.ReviewerStats
 
