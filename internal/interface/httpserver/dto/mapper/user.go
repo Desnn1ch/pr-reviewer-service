@@ -17,11 +17,11 @@ func SetIsActiveRequestToArgs(r req.SetIsActive) (uuid.UUID, bool, error) {
 	return id, r.IsActive, nil
 }
 
-func UserToResponse(u entity.User, teamName string) resp.User {
+func UserToResponse(u entity.User) resp.User {
 	return resp.User{
 		UserID:   u.ID.String(),
 		Username: u.Name,
-		TeamName: teamName,
+		TeamName: u.TeamName,
 		IsActive: u.IsActive,
 	}
 }
